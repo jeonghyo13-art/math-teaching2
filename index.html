@@ -140,6 +140,11 @@
 
         <!-- ================= [객관식 뷰] ================= -->
         <section id="view-quiz" class="hidden">
+            <!-- Quiz Set Filter -->
+            <div class="flex gap-2 overflow-x-auto no-scrollbar py-2 mb-4" id="quiz-set-container">
+                <!-- Quiz sets rendered here -->
+            </div>
+
             <div class="mb-6">
                 <h2 class="text-xl font-bold text-slate-800">실전 객관식 트레이닝</h2>
                 <p class="text-sm text-slate-500 mt-1">※ 한 번 선택하면 번복할 수 없습니다. 신중하게 선택하세요!</p>
@@ -291,10 +296,8 @@
         let currentTab = 'fill';
         let currentCategory = '전체';
         
-        // 새로고침 시 3개의 세트 중 하나 랜덤 선택
-        let currentQuizSetIndex = Math.floor(Math.random() * 3);
-        let currentQuizSet = quizDataSets[currentQuizSetIndex];
-        let quizState = []; // initData()에서 세트 길이에 맞춰 초기화
+        let currentQuizSetIndex = 0;
+        let quizStates = [[], [], []];
 
         // 빈칸 문제 데이터 가공
         let fillQuestions = [];
@@ -317,8 +320,20 @@
             });
             updateOverallCounts();
 
-            // 객관식 상태 배열 초기화
-            quizState = new Array(currentQuizSet.length).fill(null);
+            // 객관식 상태 및 보기 셔플 초기화
+            quizDataSets.forEach((set, i) => {
+                quizStates[i] = new Array(set.length).fill(null);
+                set.forEach(q => {
+                    if (!q.shuffledOptions) {
+                        let opts = q.options.map((text, idx) => ({ text, originalIdx: idx }));
+                        for (let j = opts.length - 1; j > 0; j--) {
+                            const k = Math.floor(Math.random() * (j + 1));
+                            [opts[j], opts[k]] = [opts[k], opts[j]];
+                        }
+                        q.shuffledOptions = opts;
+                    }
+                });
+            });
         }
 
         // 문장 안의 [정답]을 input 태그로 변환
@@ -365,6 +380,22 @@
             renderFillContent();
         }
 
+        function renderQuizSetFilter() {
+            const container = document.getElementById('quiz-set-container');
+            container.innerHTML = quizDataSets.map((_, i) => `
+                <button onclick="selectQuizSet(${i})" 
+                    class="whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-colors ${currentQuizSetIndex === i ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}">
+                    Set ${i + 1}
+                </button>
+            `).join('');
+        }
+
+        function selectQuizSet(index) {
+            currentQuizSetIndex = index;
+            renderQuizSetFilter();
+            renderQuizContent();
+        }
+
         function renderFillContent() {
             const container = document.getElementById('fill-content');
             
@@ -384,6 +415,8 @@
 
         function renderQuizContent() {
             const container = document.getElementById('quiz-content');
+            const currentQuizSet = quizDataSets[currentQuizSetIndex];
+            const currentState = quizStates[currentQuizSetIndex];
             
             // UI에 현재 세트 번호(1~3) 표시
             const titleEl = document.querySelector('#view-quiz h2');
@@ -391,20 +424,37 @@
                 titleEl.innerText = `실전 객관식 트레이닝 (Set ${currentQuizSetIndex + 1})`;
             }
             
-            container.innerHTML = currentQuizSet.map((q, i) => `
+            container.innerHTML = currentQuizSet.map((q, i) => {
+                const state = currentState[i];
+                const isSolved = state !== null;
+                
+                return `
                 <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-slate-200" id="quiz-box-${i}">
                     <div class="font-bold text-indigo-600 mb-3 text-sm">Q${i+1}.</div>
                     <p class="font-semibold text-lg mb-5">${q.q}</p>
                     <div class="space-y-3">
-                        ${q.options.map((opt, optIdx) => `
-                            <button onclick="handleQuizAnswer(${i}, ${optIdx})" id="quiz-btn-${i}-${optIdx}"
-                                class="w-full text-left p-4 rounded-lg border-2 border-slate-100 hover:border-indigo-300 hover:bg-indigo-50 transition-all font-medium text-slate-700">
-                                ${optIdx + 1}. ${opt}
-                            </button>
-                        `).join('')}
+                        ${q.shuffledOptions.map((opt, optIdx) => {
+                            let btnClasses = 'w-full text-left p-4 rounded-lg border-2 transition-all font-medium';
+                            if (!isSolved) {
+                                btnClasses += ' border-slate-100 hover:border-indigo-300 hover:bg-indigo-50 text-slate-700';
+                            } else {
+                                if (opt.originalIdx === q.ans) {
+                                    btnClasses += ' border-emerald-500 bg-emerald-100 text-emerald-800';
+                                } else if (opt.originalIdx === state.selectedOriginalIdx && !state.isCorrect) {
+                                    btnClasses += ' border-rose-500 bg-rose-100 text-rose-800';
+                                } else {
+                                    btnClasses += ' border-slate-100 text-slate-700 opacity-50';
+                                }
+                            }
+                            
+                            return `<button onclick="handleQuizAnswer(${i}, ${optIdx}, ${opt.originalIdx})" id="quiz-btn-${i}-${optIdx}"
+                                class="${btnClasses}" ${isSolved ? 'disabled' : ''}>
+                                ${optIdx + 1}. ${opt.text}
+                            </button>`;
+                        }).join('')}
                     </div>
                     <!-- 해설 박스 -->
-                    <div id="exp-box-${i}" class="exp-box bg-slate-50 border border-slate-200 rounded-lg p-4">
+                    <div id="exp-box-${i}" class="exp-box bg-slate-50 border border-slate-200 rounded-lg p-4 ${isSolved ? 'show' : ''}" ${isSolved ? 'style="max-height:500px; opacity:1; margin-top:1rem;"' : ''}>
                         <div class="flex items-start gap-2">
                             <span class="text-xl">💡</span>
                             <div>
@@ -414,7 +464,7 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
             
             recalculateProgress();
         }
@@ -518,12 +568,15 @@
 
         // ================= 객관식 로직 =================
         
-        function handleQuizAnswer(qIdx, selectedOptIdx) {
-            if (quizState[qIdx] !== null) return; // 이미 풀었으면 무시
+        function handleQuizAnswer(qIdx, selectedRenderIdx, selectedOriginalIdx) {
+            const currentState = quizStates[currentQuizSetIndex];
+            if (currentState[qIdx] !== null) return; // 이미 풀었으면 무시
 
+            const currentQuizSet = quizDataSets[currentQuizSetIndex];
             const qData = currentQuizSet[qIdx];
-            const isCorrect = (qData.ans === selectedOptIdx);
-            quizState[qIdx] = isCorrect ? 'correct' : 'wrong';
+            const isCorrect = (qData.ans === selectedOriginalIdx);
+            
+            currentState[qIdx] = { isCorrect, selectedRenderIdx, selectedOriginalIdx };
 
             // 모든 버튼 비활성화 및 스타일 처리
             const buttons = document.querySelectorAll(`[id^="quiz-btn-${qIdx}-"]`);
@@ -531,14 +584,16 @@
                 btn.disabled = true;
                 btn.classList.remove('hover:border-indigo-300', 'hover:bg-indigo-50');
                 
-                if (idx === qData.ans) {
+                const optOriginalIdx = qData.shuffledOptions[idx].originalIdx;
+                
+                if (optOriginalIdx === qData.ans) {
                     // 원래 정답은 무조건 초록색 표시
                     btn.classList.add('border-emerald-500', 'bg-emerald-100', 'text-emerald-800');
-                    btn.classList.remove('border-slate-100');
-                } else if (idx === selectedOptIdx && !isCorrect) {
+                    btn.classList.remove('border-slate-100', 'text-slate-700');
+                } else if (idx === selectedRenderIdx && !isCorrect) {
                     // 내가 누른 오답은 빨간색 표시
                     btn.classList.add('border-rose-500', 'bg-rose-100', 'text-rose-800');
-                    btn.classList.remove('border-slate-100');
+                    btn.classList.remove('border-slate-100', 'text-slate-700');
                 } else {
                     btn.classList.add('opacity-50');
                 }
@@ -546,6 +601,7 @@
 
             // 해설 박스 표시
             document.getElementById(`exp-box-${qIdx}`).classList.add('show');
+            document.getElementById(`exp-box-${qIdx}`).style = ""; // 인라인 스타일 초기화
             
             updateProgressUI();
         }
@@ -593,9 +649,16 @@
                     if (input.classList.contains('wrong-revealed')) wrong++;
                 });
             } else {
-                total = currentQuizSet.length;
-                correct = quizState.filter(s => s === 'correct').length;
-                wrong = quizState.filter(s => s === 'wrong').length;
+                const currentSet = quizDataSets[currentQuizSetIndex];
+                const currentState = quizStates[currentQuizSetIndex];
+                total = currentSet.length;
+                
+                currentState.forEach(state => {
+                    if (state !== null) {
+                        if (state.isCorrect) correct++;
+                        else wrong++;
+                    }
+                });
             }
 
             document.getElementById('progress-text').innerText = `${correct + wrong}/${total}`;
@@ -613,6 +676,7 @@
         window.onload = () => {
             initData();
             renderCategoryFilter();
+            renderQuizSetFilter();
             renderFillContent();
             renderQuizContent();
             switchTab('fill'); // default
