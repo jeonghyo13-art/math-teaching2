@@ -320,19 +320,9 @@
             });
             updateOverallCounts();
 
-            // 객관식 상태 및 보기 셔플 초기화
+            // 객관식 상태 배열 초기화
             quizDataSets.forEach((set, i) => {
                 quizStates[i] = new Array(set.length).fill(null);
-                set.forEach(q => {
-                    if (!q.shuffledOptions) {
-                        let opts = q.options.map((text, idx) => ({ text, originalIdx: idx }));
-                        for (let j = opts.length - 1; j > 0; j--) {
-                            const k = Math.floor(Math.random() * (j + 1));
-                            [opts[j], opts[k]] = [opts[k], opts[j]];
-                        }
-                        q.shuffledOptions = opts;
-                    }
-                });
             });
         }
 
@@ -427,6 +417,16 @@
             container.innerHTML = currentQuizSet.map((q, i) => {
                 const state = currentState[i];
                 const isSolved = state !== null;
+                
+                // 풀지 않은 문제는 렌더링(탭 이동, 세트 변경 등)할 때마다 항상 새롭게 섞기
+                if (!isSolved || !q.shuffledOptions) {
+                    let opts = q.options.map((text, idx) => ({ text, originalIdx: idx }));
+                    for (let j = opts.length - 1; j > 0; j--) {
+                        const k = Math.floor(Math.random() * (j + 1));
+                        [opts[j], opts[k]] = [opts[k], opts[j]];
+                    }
+                    q.shuffledOptions = opts;
+                }
                 
                 return `
                 <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-slate-200" id="quiz-box-${i}">
