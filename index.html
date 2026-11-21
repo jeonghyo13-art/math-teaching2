@@ -69,49 +69,44 @@
 <body class="pb-24">
 
     <!-- Header & Tabs (Sticky) -->
-    <header class="sticky top-0 z-50 bg-white shadow-sm">
-        <div class="max-w-5xl mx-auto">
-            <div class="px-4 py-4 md:py-5 bg-indigo-600 text-white flex justify-between items-center rounded-b-xl shadow-lg">
-                <div>
-                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">수교론 완벽 인출 🧠</h1>
-                    <p class="text-indigo-200 text-xs mt-1">2026 트렌드 완결판 · 모의고사 100제</p>
-                </div>
-                <div class="text-sm font-bold bg-indigo-800 px-4 py-2 rounded-full shadow-inner">D-DAY 🔥</div>
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-full">2026 임용 D-14</span>
+                <h1 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">김민아 수학교육론 파이널</h1>
             </div>
-
-            <!-- Tab Buttons -->
-            <div class="flex border-b border-slate-200">
-                <button id="tab-fill" class="flex-1 py-3.5 text-center font-bold text-indigo-600 border-b-4 border-indigo-600 transition-colors" onclick="switchTab('fill')">
-                    📝 빵꾸노트 인출
+            <div class="flex bg-slate-50 p-1 rounded-full border border-slate-200">
+                <button id="nav-quiz" onclick="switchTab('quiz')" class="px-4 py-1.5 rounded-full text-sm font-bold bg-white text-indigo-700 shadow-sm border border-slate-200 flex items-center gap-1 transition-all">
+                    📝 실전 객관식 100제
                 </button>
-                <button id="tab-quiz" class="flex-1 py-3.5 text-center font-medium text-slate-400 border-b-4 border-transparent hover:text-slate-600 transition-colors" onclick="switchTab('quiz')">
-                    🎯 객관식 마스터 (100제)
+                <button id="nav-fill" onclick="switchTab('fill')" class="px-4 py-1.5 rounded-full text-sm font-medium text-slate-500 hover:text-slate-800 border border-transparent flex items-center gap-1 transition-all">
+                    ✍️ 빵꾸노트 인출
                 </button>
             </div>
-
-            <!-- Progress Bar -->
-            <div class="px-4 py-3 bg-white border-b border-slate-100">
-                <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1.5">
-                    <span id="progress-title">전체 진행률 (<span id="progress-text">0/0</span>)</span>
-                    <div class="flex gap-3">
-                        <span class="text-emerald-500 flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>맞힘 <span id="count-correct">0</span>
-                        </span>
-                        <span class="text-rose-500 flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-rose-500"></span>오답 <span id="count-wrong">0</span>
-                        </span>
-                    </div>
+        </div>
+        
+        <!-- Progress Bar (Sticky) -->
+        <div id="progress-container" class="max-w-6xl mx-auto px-4 py-3 bg-white hidden">
+            <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1.5">
+                <span id="progress-title">진행률 (<span id="progress-text">0/0</span>)</span>
+                <div class="flex gap-3">
+                    <span class="text-emerald-500 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>맞힘 <span id="count-correct">0</span>
+                    </span>
+                    <span class="text-rose-500 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>오답 <span id="count-wrong">0</span>
+                    </span>
                 </div>
-                <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
-                    <div id="bar-correct" class="h-full bg-emerald-500 transition-all duration-500 ease-out" style="width: 0%"></div>
-                    <div id="bar-wrong" class="h-full bg-rose-500 transition-all duration-500 ease-out" style="width: 0%"></div>
-                </div>
+            </div>
+            <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
+                <div id="bar-correct" class="h-full bg-emerald-500 transition-all duration-500 ease-out" style="width: 0%"></div>
+                <div id="bar-wrong" class="h-full bg-rose-500 transition-all duration-500 ease-out" style="width: 0%"></div>
             </div>
         </div>
     </header>
 
     <!-- Main Content Area -->
-    <main class="max-w-5xl mx-auto px-4 py-6">
+    <main class="max-w-6xl mx-auto px-4 py-6">
         
         <!-- ================= [빵꾸노트 뷰] ================= -->
         <section id="view-fill" class="block">
@@ -137,30 +132,34 @@
 
         <!-- ================= [객관식 대시보드 뷰] ================= -->
         <section id="view-quiz-dashboard" class="hidden">
-            <div class="text-center mb-10 mt-4">
-                <h2 class="text-2xl font-bold text-slate-800 mb-2">수학교육론 마스터: 객관식 100제</h2>
-                <p class="text-slate-500 text-sm">20문항 × 5개 세트 구성 · 매 시작 및 탭 이동 시 4지선다 보기가 100% 자동 셔플됩니다.</p>
+            <div class="flex flex-col items-center mt-8 mb-10 text-center">
+                <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-4 py-1.5 rounded-full border border-indigo-100 mb-4">
+                    파이널 전 범위 · 중복 없는 완전 신규 100문항
+                </span>
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-3 tracking-tight">임용고시 수학교육론 마스터: 핵심 이론 100제</h2>
+                <p class="text-slate-500 text-sm md:text-base">20문항 × 5개 세트 구성 · 매 시작 및 새로고침 시 문항 순서와 4지선다 보기가 자동 셔플됩니다</p>
             </div>
 
-            <div class="flex justify-center mb-8">
-                <div class="inline-flex bg-white rounded-full p-1 shadow-sm border border-slate-200">
-                    <button class="px-5 py-2 rounded-full text-sm font-bold bg-indigo-600 text-white shadow">전체 세트 목록</button>
-                    <!-- UI 장식용 버튼들 -->
-                    <button class="px-5 py-2 rounded-full text-sm font-medium text-slate-500 hover:text-slate-800" onclick="enterQuizSet(0)">1세트</button>
-                    <button class="px-5 py-2 rounded-full text-sm font-medium text-slate-500 hover:text-slate-800" onclick="enterQuizSet(1)">2세트</button>
-                    <button class="px-5 py-2 rounded-full text-sm font-medium text-slate-500 hover:text-slate-800" onclick="enterQuizSet(2)">3세트</button>
-                    <button class="px-5 py-2 rounded-full text-sm font-medium text-slate-500 hover:text-slate-800" onclick="enterQuizSet(3)">4세트</button>
-                    <button class="px-5 py-2 rounded-full text-sm font-medium text-slate-500 hover:text-slate-800" onclick="enterQuizSet(4)">5세트</button>
+            <div class="flex justify-center mb-10 overflow-x-auto no-scrollbar py-1">
+                <div class="inline-flex bg-white rounded-full p-1 shadow-sm border border-slate-200 gap-1 whitespace-nowrap">
+                    <button class="px-5 md:px-6 py-2 rounded-full text-sm font-bold bg-indigo-600 text-white shadow flex items-center gap-2">
+                        📚 전체 세트 목록
+                    </button>
+                    <button class="px-4 md:px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors" onclick="enterQuizSet(0)">1세트 (20제)</button>
+                    <button class="px-4 md:px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors" onclick="enterQuizSet(1)">2세트 (20제)</button>
+                    <button class="px-4 md:px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors" onclick="enterQuizSet(2)">3세트 (20제)</button>
+                    <button class="px-4 md:px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors" onclick="enterQuizSet(3)">4세트 (20제)</button>
+                    <button class="px-4 md:px-5 py-2 rounded-full text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors" onclick="enterQuizSet(4)">5세트 (20제)</button>
                 </div>
             </div>
 
-            <div class="flex justify-between items-end mb-4 px-1">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 px-1 gap-3">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800">학습할 모의고사 세트를 선택하세요</h3>
-                    <p class="text-xs text-slate-500 mt-1">총 100문항이 영역별로 체계적으로 구성되어 있습니다.</p>
+                    <h3 class="text-lg md:text-xl font-bold text-slate-800">학습할 모의고사 세트를 선택하세요</h3>
+                    <p class="text-xs md:text-sm text-slate-500 mt-1">총 100문항이 주제별 5개 세트(각 20문항)로 체계적으로 구성되어 있습니다.</p>
                 </div>
-                <div class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded border border-indigo-100 flex items-center gap-1">
-                    <span>🔀</span> 보기 순서 무작위 재배치 적용
+                <div class="text-xs md:text-sm font-semibold text-indigo-700 bg-indigo-50 px-3 py-1.5 rounded-md border border-indigo-100 flex items-center gap-1.5 shadow-sm">
+                    <span>🔀</span> 문항 및 보기 순서 100% 무작위 재배치 적용
                 </div>
             </div>
 
@@ -395,20 +394,20 @@
                 const isCompleted = solvedCount === totalCount;
                 
                 return `
-                <div class="set-card bg-white rounded-2xl p-6 border border-slate-200 flex flex-col justify-between transition-transform cursor-pointer" onclick="enterQuizSet(${i})">
+                <div class="set-card bg-white rounded-2xl p-7 border border-slate-200 flex flex-col justify-between hover:-translate-y-1 hover:shadow-md transition-all cursor-pointer group" onclick="enterQuizSet(${i})">
                     <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full">SET 0${i+1} · ${totalCount}문항</span>
-                            <span class="text-xs font-semibold ${isCompleted ? 'text-emerald-500' : (solvedCount > 0 ? 'text-indigo-500' : 'text-slate-400')}">
-                                ${isCompleted ? '응시 완료' : (solvedCount > 0 ? `진행중 (${solvedCount}/${totalCount})` : '미응시')}
+                        <div class="flex justify-between items-center mb-5">
+                            <span class="text-indigo-600 bg-indigo-50 text-xs font-bold px-3 py-1 rounded-full border border-indigo-100">SET 0${i+1} · ${totalCount}문항</span>
+                            <span class="text-xs font-bold px-3 py-1 rounded-full ${isCompleted ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : (solvedCount > 0 ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-slate-50 text-slate-500 border border-slate-200')}">
+                                ${isCompleted ? '응시완료' : (solvedCount > 0 ? '응시중' : '미응시')}
                             </span>
                         </div>
-                        <h4 class="text-lg font-bold text-slate-800 mb-2">${setTitles[i].title}</h4>
-                        <p class="text-sm text-slate-500 line-clamp-2">${setTitles[i].desc}</p>
+                        <h4 class="text-lg font-bold text-slate-900 mb-3">${setTitles[i].title}</h4>
+                        <p class="text-sm text-slate-500 leading-relaxed line-clamp-2">${setTitles[i].desc}</p>
                     </div>
-                    <div class="mt-6 flex justify-between items-center border-t border-slate-100 pt-4">
-                        <span class="text-xs text-slate-400">객관식 4지선다 · 보기 자동 셔플</span>
-                        <span class="text-indigo-600 font-bold text-sm flex items-center gap-1 hover:text-indigo-800">
+                    <div class="mt-8 flex justify-between items-center border-t border-slate-100 pt-4">
+                        <span class="text-xs text-slate-400 font-medium">객관식 4지선다 · 문항·보기 자동 셔플</span>
+                        <span class="text-indigo-600 font-bold text-sm flex items-center gap-1 group-hover:text-indigo-800 transition-colors">
                             세트 풀기 <span class="text-lg leading-none">→</span>
                         </span>
                     </div>
@@ -421,6 +420,7 @@
             currentQuizSetIndex = index;
             document.getElementById('view-quiz-dashboard').classList.add('hidden');
             document.getElementById('view-quiz-solve').classList.remove('hidden');
+            document.getElementById('progress-container').classList.remove('hidden');
             document.getElementById('solve-set-title').innerText = setTitles[index].title;
             renderQuizContent();
             window.scrollTo(0,0);
@@ -430,6 +430,7 @@
             currentQuizSetIndex = null;
             document.getElementById('view-quiz-solve').classList.add('hidden');
             document.getElementById('view-quiz-dashboard').classList.remove('hidden');
+            document.getElementById('progress-container').classList.add('hidden');
             renderQuizDashboard();
             updateProgressUI();
             window.scrollTo(0,0);
@@ -581,25 +582,35 @@
         // ================= 7. 공통 UI 업데이트 =================
         function switchTab(tabId) {
             currentTab = tabId;
-            document.getElementById('tab-fill').className = tabId === 'fill' ? "flex-1 py-3.5 text-center font-bold text-indigo-600 border-b-4 border-indigo-600 transition-colors" : "flex-1 py-3.5 text-center font-medium text-slate-400 border-b-4 border-transparent hover:text-slate-600 transition-colors";
-            document.getElementById('tab-quiz').className = tabId === 'quiz' ? "flex-1 py-3.5 text-center font-bold text-indigo-600 border-b-4 border-indigo-600 transition-colors" : "flex-1 py-3.5 text-center font-medium text-slate-400 border-b-4 border-transparent hover:text-slate-600 transition-colors";
+            const navQuiz = document.getElementById('nav-quiz');
+            const navFill = document.getElementById('nav-fill');
+            const progressContainer = document.getElementById('progress-container');
 
-            if (tabId === 'fill') {
-                document.getElementById('view-fill').classList.remove('hidden');
-                document.getElementById('view-quiz-dashboard').classList.add('hidden');
-                document.getElementById('view-quiz-solve').classList.add('hidden');
-                document.getElementById('progress-title').innerText = "빈칸 인출 진행률";
-            } else {
+            if (tabId === 'quiz') {
+                navQuiz.className = "px-4 py-1.5 rounded-full text-sm font-bold bg-white text-indigo-700 shadow-sm border border-slate-200 flex items-center gap-1 transition-all";
+                navFill.className = "px-4 py-1.5 rounded-full text-sm font-medium text-slate-500 hover:text-slate-800 border border-transparent flex items-center gap-1 transition-all";
+                
                 document.getElementById('view-fill').classList.add('hidden');
                 if (currentQuizSetIndex === null) {
                     document.getElementById('view-quiz-dashboard').classList.remove('hidden');
                     document.getElementById('view-quiz-solve').classList.add('hidden');
-                    document.getElementById('progress-title').innerText = "전체 객관식(100제) 진행률";
+                    progressContainer.classList.add('hidden');
                 } else {
                     document.getElementById('view-quiz-dashboard').classList.add('hidden');
                     document.getElementById('view-quiz-solve').classList.remove('hidden');
+                    progressContainer.classList.remove('hidden');
                     document.getElementById('progress-title').innerText = `현재 세트 진행률`;
                 }
+            } else {
+                navFill.className = "px-4 py-1.5 rounded-full text-sm font-bold bg-white text-indigo-700 shadow-sm border border-slate-200 flex items-center gap-1 transition-all";
+                navQuiz.className = "px-4 py-1.5 rounded-full text-sm font-medium text-slate-500 hover:text-slate-800 border border-transparent flex items-center gap-1 transition-all";
+
+                document.getElementById('view-fill').classList.remove('hidden');
+                document.getElementById('view-quiz-dashboard').classList.add('hidden');
+                document.getElementById('view-quiz-solve').classList.add('hidden');
+                
+                progressContainer.classList.remove('hidden');
+                document.getElementById('progress-title').innerText = "빈칸 인출 진행률";
             }
             updateProgressUI();
         }
@@ -649,7 +660,7 @@
             renderCategoryFilter();
             renderFillContent();
             renderQuizDashboard();
-            switchTab('fill');
+            switchTab('quiz');
         };
     </script>
 </body>
